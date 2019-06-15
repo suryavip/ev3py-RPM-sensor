@@ -21,9 +21,9 @@ class ButtonListener():
     def poll(self):
         while True:
             state = self.button in brick.buttons()
-            if state == True and lastState == False:
+            if state == True and self.lastState == False:
                 self.ifPressed()
-            lastState = state
+            self.lastState = state
             wait(10)
 
 
@@ -50,7 +50,7 @@ class RPMSensor():
         while True:
             brick.display.clear()
             if self.mode == 'measuring':
-                brick.display.text('{} RPM'.format(self.rpm), (60, 50))
+                brick.display.text('{0:.2f} RPM'.format(self.rpm), (60, 50))
             elif self.mode == 'calibrating':
                 brick.display.text('CALIBRATING...', (60, 50))
             wait(500)
@@ -61,11 +61,15 @@ class RPMSensor():
         while len(self.sample) < 100:
             v = self.lightSensor.reflection()
             self.sample.append(v)
-        self.mid = (max(self.sample) - min(self.sample)) / 2
+        maximum = max(self.sample)
+        self.mid = maximum - (maximum * 0.1)
+        print(self.mid)
         self.mode = 'measuring'
 
     def measure(self):
         while True:
+            if self.mode != 'measuring':
+                continue
             v = self.lightSensor.reflection()
             if v > self.mid:
                 interval = self.stopWatch.time()  # how long it took for 1 rotation
@@ -78,3 +82,6 @@ class RPMSensor():
                 self.stopWatch.resume()
 
 RPMSensor()
+a = 'a'
+while True:
+    a = 'a'
